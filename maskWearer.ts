@@ -24,23 +24,29 @@ export class maskWearer{
         let statement = potential_statements[statement_index] 
         return statement.replace("{name}", this.name)
     }
+
+    draw(con:CanvasRenderingContext2D, x:number, y:number, width:number, height:number){
+        console.log(this.sprite)
+        this.sprite.draw(con, x, y, width, height)
+    }
+
+    
 }
 
-let defaultSprite:sprite = new sprite()
 let baseTrueFunction = ()=>{return true}
 let baseFalseFunction = ()=>{return false}
 let baseRandomFunction = ()=>{return (Math.random() > 0.5)}
 
 export let zodiacs:maskWearer[] = [
-    new maskWearer(defaultSprite, new logic(0, baseTrueFunction), "Aries"),
-    new maskWearer(defaultSprite, new logic(0, baseFalseFunction), "Taurus"),
-    new maskWearer(defaultSprite, new logic(0, baseTrueFunction), "Gemini"),
-    new maskWearer(defaultSprite, new logic(0, baseRandomFunction), "Cancer"),
-    new maskWearer(defaultSprite, new logic(0, baseTrueFunction), "Leo"),
-    new maskWearer(defaultSprite, new logic(0, baseFalseFunction), "Virgo"),
-    new maskWearer(defaultSprite, new logic(0, baseRandomFunction), "Scorpio"),
-    new maskWearer(defaultSprite, new logic(0, baseTrueFunction), "Sagitarius"),
-    new maskWearer(defaultSprite, new logic(0, baseRandomFunction), "Capricorn"),
-    new maskWearer(defaultSprite, new logic(0, baseTrueFunction), "Pisces"),
-    new maskWearer(defaultSprite, new logic(0, baseFalseFunction), "Aquarius")
+    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Aries"),
+    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Taurus"),
+    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Gemini"),
+    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Cancer"),
+    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Leo"),
+    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Virgo"),
+    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Scorpio"),
+    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Sagitarius"),
+    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Capricorn"),
+    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Pisces"),
+    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Aquarius")
 ]

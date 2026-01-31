@@ -1,6 +1,12 @@
+/*
+Substitutions:
+{name} - swap with the speaker's name.
+
+*/
+
 let statements = [
     ["I am {name}", true],
-    ["I am Leo", false]
+    ["One plus one is three", false]
 ]
 
 export default statements
