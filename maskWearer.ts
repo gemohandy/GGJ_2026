@@ -2,7 +2,7 @@ import sprite from "./sprite.ts";
 import logic from "./logic.ts";
 import statements from "./statements.ts";
 
-export class maskWearer{
+class maskWearer{
     sprite:sprite
     logic:logic
     name:string=""
@@ -26,27 +26,10 @@ export class maskWearer{
     }
 
     draw(con:CanvasRenderingContext2D, x:number, y:number, width:number, height:number){
-        console.log(this.sprite)
         this.sprite.draw(con, x, y, width, height)
     }
 
     
 }
 
-let baseTrueFunction = ()=>{return true}
-let baseFalseFunction = ()=>{return false}
-let baseRandomFunction = ()=>{return (Math.random() > 0.5)}
-
-export let zodiacs:maskWearer[] = [
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Aries"),
-    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Taurus"),
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Gemini"),
-    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Cancer"),
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Leo"),
-    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Virgo"),
-    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Scorpio"),
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Sagitarius"),
-    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Capricorn"),
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Pisces"),
-    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Aquarius")
-]
+export default maskWearer

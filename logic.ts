@@ -1,4 +1,4 @@
-import {maskWearer} from "./maskWearer.ts"
+import maskWearer from "./maskWearer.ts"
 
 class logic{
     active_value: (room:maskWearer[]) => boolean = ()=>{return true}

@@ -15,7 +15,6 @@ class sprite{
         if(c1 === null){
             let iterator = colors.keys()
             index_1 = Math.floor(Math.random() * colors.size)
-            console.log(index_1)
             for(let i = 0; i < index_1; i++){
                 iterator.next()
             }

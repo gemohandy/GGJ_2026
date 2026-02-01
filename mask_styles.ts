@@ -19,7 +19,7 @@ function smoothHair(context: CanvasRenderingContext2D, x:number, y:number, w:num
 
 function featherHair(context: CanvasRenderingContext2D, x:number, y:number, w:number, h:number, color_1:string, color_2:string, color_3:string):void{
     context.save()
-    context.lineWidth = 30
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.strokeStyle="#000000"
     context.beginPath()
     context.moveTo(x+w/2, y+h)
@@ -45,9 +45,10 @@ function featherHair(context: CanvasRenderingContext2D, x:number, y:number, w:nu
 
 function hornHair(context: CanvasRenderingContext2D, x:number, y:number, w:number, h:number, color_1:string, color_2:string, color_3:string):void{
     context.save()
-    context.lineWidth = 30
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.strokeStyle="#000000"
     context.fillStyle = color_2
+    context.beginPath()
     context.moveTo(x+w/4, y+h)
     context.bezierCurveTo(x+3*w/16, y+h/2, x+3*w/16, y+h/2, x+3*w/16, y)
     context.bezierCurveTo(x+w/4, y+h/2, x+w/4, y+3*h/4, x+7*w/16, y+h)
@@ -76,7 +77,7 @@ function circle_eyes(context: CanvasRenderingContext2D, x:number, y:number, w:nu
     context.save()
     let radius = Math.min(h/2, w/6)
     context.strokeStyle = "#000000"
-    context.lineWidth = 20
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.fillStyle = colors.get(color_2) as string
     context.beginPath()
     context.arc(x+w/4, y+h/2, radius, 0, 2 * Math.PI)
@@ -93,7 +94,7 @@ function angry_eyes(context: CanvasRenderingContext2D, x:number, y:number, w:num
     context.save()
     let radius = Math.min(5 * h/8, w/6)
     context.strokeStyle = "#000000"
-    context.lineWidth = 20
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.fillStyle = colors.get(color_2) as string
     context.beginPath()
     context.arc(x+9*w/32, y+3*h/8, radius, Math.PI/8, 5 * Math.PI / 4)
@@ -111,7 +112,7 @@ function angry_eyes(context: CanvasRenderingContext2D, x:number, y:number, w:num
 function triangle_eyes(context: CanvasRenderingContext2D, x:number, y:number, w:number, h:number, color_1:string, color_2:string, color_3:string):void{
     context.save()
     context.strokeStyle = "#000000"
-    context.lineWidth = 20
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.fillStyle = colors.get(color_2) as string
     context.beginPath()
     context.moveTo(x+3*w/16, y+h)
@@ -139,7 +140,7 @@ export let eyes = new Map<string, (context: CanvasRenderingContext2D, x:number, 
 function smile_mouth(context: CanvasRenderingContext2D, x:number, y:number, w:number, h:number, color_1:string, color_2:string, color_3:string):void{
     context.save()
     context.strokeStyle = "#000000"
-    context.lineWidth = 20
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.fillStyle = color_3
     context.beginPath()
     context.moveTo(x,y)
@@ -153,7 +154,7 @@ function smile_mouth(context: CanvasRenderingContext2D, x:number, y:number, w:nu
 function frown_mouth(context: CanvasRenderingContext2D, x:number, y:number, w:number, h:number, color_1:string, color_2:string, color_3:string):void{
     context.save()
     context.strokeStyle = "#000000"
-    context.lineWidth = 20
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.fillStyle = color_3
     context.beginPath()
     context.moveTo(x,y+7*h/8)
@@ -167,7 +168,7 @@ function frown_mouth(context: CanvasRenderingContext2D, x:number, y:number, w:nu
 function tooth_mouth(context: CanvasRenderingContext2D, x:number, y:number, w:number, h:number, color_1:string, color_2:string, color_3:string):void{
     context.save()
     context.strokeStyle = "#000000"
-    context.lineWidth = 20
+    context.lineWidth = Math.ceil(Math.min(w/75, h/12))
     context.fillStyle = color_3
     context.beginPath()
     context.moveTo(x, y+h/3)
@@ -204,7 +205,7 @@ export function base_mask(context: CanvasRenderingContext2D, x:number, y:number,
     context.save()
     context.strokeStyle = "#000000"
     context.fillStyle = colors.get(color_1) as string
-    context.lineWidth = 30
+    context.lineWidth = Math.ceil(Math.min(w/75, h/75))
     context.beginPath()
     context.moveTo(x, y + h/8)
     context.bezierCurveTo(x+w/8, y, x+7*w/8, y, x+w, y+h/8)
