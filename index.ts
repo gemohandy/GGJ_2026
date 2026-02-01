@@ -483,7 +483,7 @@ function drawScore(){
     if(score == 11){
         context.fillText("You broke the curse! Congratulations!", 2000, 1225)
     }else{
-        context.fillText("You didn't break the curse. Try again!", 2000, 1225)
+        context.fillText("You didn't break the curse. Too bad!", 2000, 1225)
     }
 
     context.restore()
