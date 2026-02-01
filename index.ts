@@ -21,8 +21,15 @@ let zodiacs:maskWearer[] = [
     new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Aquarius")
 ]
 
+let introText = ["You and eleven of your friends were invited to a Masquerade party. Unfortunately, it turns out the masks are all cursed. The only way for you all to escape is for you, specifically, to figure out which Mask is which.", 
+    "Click on any Mask to hear a statement from the wearer, though keep in mind the Masks compel certain behaviors from their wearers.", 
+    "Click the star chart in the top right corner to learn more about the Zodiacs, and what impact their associated Mask have on their wearer.", 
+    "Click the double-arrow button to have everyone generate a new statement - you may want to write down their old statements, for your own refence.", 
+    "Use the book in the bottom right corner to make your guesses about the Mask's identities. Keep in mind, you only get one guess."]
+let introIndex = 0
+
 let guesses:string[] = []
-let options = ["", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Scorpio", "Sagittarius", "Capricorn", "Pisces", "Aquarius"]
+const options = ["", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Scorpio", "Sagittarius", "Capricorn", "Pisces", "Aquarius"]
 
 let dropdownOpen = -1
 
@@ -30,17 +37,23 @@ let current_index = 0
 let starchart_index = 0
 let statements:string[] = []
 let archive:string[][] = []
-let game_state = "grid"
+let game_state = "menu"
 
-let canvas = document.getElementById("game-canvas") as HTMLCanvasElement
-let openBook = document.getElementById("open-book-asset") as HTMLImageElement
-let closedBook = document.getElementById("closed-book-asset") as HTMLImageElement
-let starchartIcon = document.getElementById("starchart-icon-asset") as HTMLImageElement
-let starchartFull = document.getElementById("open-starchart-asset") as HTMLImageElement
+const canvas = document.getElementById("game-canvas") as HTMLCanvasElement
+const openBook = document.getElementById("open-book-asset") as HTMLImageElement
+const closedBook = document.getElementById("closed-book-asset") as HTMLImageElement
+const starchartIcon = document.getElementById("starchart-icon-asset") as HTMLImageElement
+const starchartFull = document.getElementById("open-starchart-asset") as HTMLImageElement
 
-let context = canvas.getContext("2d") as CanvasRenderingContext2D
+const context = canvas.getContext("2d") as CanvasRenderingContext2D
 
 function setup(): void{
+    introIndex = 0
+    guesses = []
+    dropdownOpen = -1
+    starchart_index = 0
+    archive = []
+
     let currentIndex = zodiacs.length
     let randomIndex:number
     while(currentIndex !== 0){
@@ -55,8 +68,6 @@ function setup(): void{
     console.log(zodiacs)
     drawPage()
 }
-
-setup()
 
 function generateStatements(clearGuesses:boolean = false){
     if(clearGuesses){
@@ -79,6 +90,12 @@ function drawPage(){
     context.fillStyle = "#7c5525"
     context.fillRect(0,0,4000,2250)
     switch(game_state){
+        case "menu":
+            drawMenu();
+            break;
+        case "intro":
+            drawIntro();
+            break;
         case "grid":
             drawGrid();
             break;
@@ -109,6 +126,46 @@ function drawPage(){
             drawStatementNotification()
             break;
     }
+}
+
+function drawMenu(){
+    let logo = document.getElementById("logo-asset") as HTMLImageElement
+    context.drawImage(logo, 0, 0, 4000, 2250)
+    context.save()
+    context.textAlign = "center"
+    context.textBaseline = "middle"
+    context.fillStyle = "#FFFFFF"
+    context.font = "150px sans-serif"
+    context.fillText("Click anywhere to begin", 2000, 1700)
+    context.restore()
+}
+
+function drawIntro(){
+    context.save()
+    context.strokeStyle = "#000000"
+    context.fillStyle = "#FFFFFF"
+    context.lineWidth = 20
+    context.fillRect(1250, 600, 1500, 1050)
+    context.strokeRect(1250, 600, 1500, 1050)
+    context.fillStyle = "#000000"
+    context.font = "80px sans-serif"
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    let scriptPart = introText[introIndex]
+    let lines:string[] = []
+    let words = scriptPart.split(" ")
+    while(words.length > 0){
+        let line = ""
+        while(words[0] !== undefined && context.measureText(line + " " + words[0]).width < 1400){
+            line += " " + words.shift()
+        }
+        lines.push(line)
+    }
+    let top = 1125 - (lines.length / 2) * 100
+    for(let i = 0; i < lines.length; i++){
+        context.fillText(lines[i], 2000, top + i * 100)
+    }
+    context.restore()
 }
 
 function drawGrid(){
@@ -200,6 +257,16 @@ function processClick(event:MouseEvent){
     mouse_y = (mouse_y - canvas_top)/canvas_height * 2250
     let side_length:number = 0, left:number = 0, top:number = 0
     switch(game_state){
+        case "menu":
+            game_state = "intro"
+            setup()
+            break;
+        case "intro":
+            introIndex ++;
+            if(introIndex == introText.length){
+                game_state = "grid"
+            }
+            break
         case "grid":
             side_length = 600
             let gap = 225
@@ -280,6 +347,9 @@ function processClick(event:MouseEvent){
             game_state = "grid"
             break
 
+        case "score":
+            game_state = "menu"
+            break
 
     }
     drawPage()
@@ -411,7 +481,9 @@ function drawScore(){
     context.fillText("You got ", 2000, 1025)
     context.fillText(score.toString() + " out of 11 correct!", 2000, 1125)
     if(score == 11){
-        context.fillText("You win! Congratulations!", 2000, 1225)
+        context.fillText("You broke the curse! Congratulations!", 2000, 1225)
+    }else{
+        context.fillText("You didn't break the curse. Try again!", 2000, 1225)
     }
 
     context.restore()
@@ -482,5 +554,6 @@ declare global{
 
 window.processClick = processClick
 
+drawPage()
 
 export default {}
