@@ -1,6 +1,7 @@
 import maskWearer from "./maskWearer.ts"
 import sprite from "./sprite.ts"
 import logic from "./logic.ts"
+import zodiacDetails from "./zodiac_descriptions.ts"
 
 let baseTrueFunction = ()=>{return true}
 let baseFalseFunction = ()=>{return false}
@@ -9,23 +10,24 @@ let baseRandomFunction = ()=>{return (Math.random() > 0.5)}
 let zodiacs:maskWearer[] = [
     new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Aries"),
     new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Taurus"),
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Gemini"),
-    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Cancer"),
+    new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Gemini"),
+    new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Cancer"),
     new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Leo"),
     new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Virgo"),
     new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Scorpio"),
-    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Sagitarius"),
+    new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Sagittarius"),
     new maskWearer(new sprite(), new logic(0, baseRandomFunction), "Capricorn"),
     new maskWearer(new sprite(), new logic(0, baseTrueFunction), "Pisces"),
     new maskWearer(new sprite(), new logic(0, baseFalseFunction), "Aquarius")
 ]
 
 let guesses:string[] = []
-let options = ["", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Scorpio", "Sagitarius", "Capricorn", "Pisces", "Aquarius"]
+let options = ["", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Scorpio", "Sagittarius", "Capricorn", "Pisces", "Aquarius"]
 
 let dropdownOpen = -1
 
 let current_index = 0
+let starchart_index = 0
 let statements:string[] = []
 let archive:string[][] = []
 let game_state = "grid"
@@ -33,6 +35,8 @@ let game_state = "grid"
 let canvas = document.getElementById("game-canvas") as HTMLCanvasElement
 let openBook = document.getElementById("open-book-asset") as HTMLImageElement
 let closedBook = document.getElementById("closed-book-asset") as HTMLImageElement
+let starchartIcon = document.getElementById("starchart-icon-asset") as HTMLImageElement
+let starchartFull = document.getElementById("open-starchart-asset") as HTMLImageElement
 
 let context = canvas.getContext("2d") as CanvasRenderingContext2D
 
@@ -47,23 +51,33 @@ function setup(): void{
         zodiacs[randomIndex] = temp
     }
 
-    let i = 1
-    for(let sign of zodiacs){
-        statements.push(sign.make_statement(zodiacs))
-        guesses.push("")
-        i++
-    }
-    
+    generateStatements(true)
+    console.log(zodiacs)
     drawPage()
 }
 
 setup()
 
+function generateStatements(clearGuesses:boolean = false){
+    if(clearGuesses){
+        guesses = []
+    }
+    archive.push(statements)
+    statements = []
+    for(let sign of zodiacs){
+        statements.push(sign.make_statement(zodiacs))
+        if(clearGuesses){
+            guesses.push("")
+        }
+    }
+
+    
+}
+
 function drawPage(){
     context.clearRect(0,0,4000, 2250)
     context.fillStyle = "#7c5525"
     context.fillRect(0,0,4000,2250)
-    console.log(game_state)
     switch(game_state){
         case "grid":
             drawGrid();
@@ -77,11 +91,22 @@ function drawPage(){
             drawIdentifyBook()
             break;
 
+        case "starchart":
+            drawStarchart()
+            break;
+
         case "score":
             drawIdentifyBook()
             context.fillStyle = "#00000044"
             context.fillRect(0,0,4000, 2500)
             drawScore()
+            break;
+
+        case "statementNotification":
+            drawGrid()
+            context.fillStyle = "#00000044"
+            context.fillRect(0,0,4000, 2500)
+            drawStatementNotification()
             break;
     }
 }
@@ -101,6 +126,7 @@ function drawGrid(){
     let left_offset = (side_length + gap) * 3
     let top_offset = (side_length + gap) * 2
     drawNextButton(left + left_offset, top + top_offset, side_length, side_length)
+    context.drawImage(starchartIcon, left + 4 * (side_length + gap), top, side_length, side_length)
     context.drawImage(closedBook, left + 4 * (side_length + gap), top + 2 * (side_length + gap), side_length, side_length)
 }
 
@@ -184,8 +210,15 @@ function processClick(event:MouseEvent){
             current_index = 4 * grid_y + grid_x
             if(grid_x < 4 && current_index != 11){
                 game_state = "statement"
-            }else if(grid_x == 4 && grid_y == 2){
-                game_state = "identify"
+            }else if(grid_x == 4){
+                if(grid_y == 2){
+                    game_state = "identify"
+                }else if(grid_y == 0){
+                    game_state = "starchart"
+                }
+            }else if(current_index == 11){
+                game_state = "statementNotification"
+                generateStatements()
             }
             break 
 
@@ -227,8 +260,44 @@ function processClick(event:MouseEvent){
             }
             break
 
+        case "starchart":
+            if(mouse_x >= 200 && mouse_y >= 100 && mouse_x <= 800 && mouse_y <= 300){
+                game_state = "grid"
+            }
+            if(mouse_x >= 200 && mouse_y >= 400 && mouse_x <= 1500 && mouse_y <= 2000){
+                top = 400
+                left = 200
+                let box_height = (2250 - 2 * top - 400) / 6
+                let col = Math.floor((mouse_x - left) / 700)
+                let row = Math.floor((mouse_y - top) / (box_height + 100))
+                if(mouse_x <= left + col * 700 + 600 && mouse_y <= top + row * (box_height + 100) + box_height){
+                    starchart_index = 6 * col + row
+                }
+            }
+            break
+
+        case "statementNotification":
+            game_state = "grid"
+            break
+
+
     }
     drawPage()
+}
+
+function drawZodiacBox(x:number,y:number,w:number,h:number,i:number){
+    context.save()
+    context.lineWidth = 20
+    context.fillStyle = "#FFFFFF40"
+    context.strokeStyle = "#220088"
+    context.fillRect(x,y,w,h)
+    context.strokeRect(x,y,w,h)
+    context.fillStyle = "#000000"
+    context.font = "80px sans-serif"
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(zodiacDetails[i][0], x+w/2, y+h/2)
+    context.restore()
 }
 
 function drawIdentifyBook(){
@@ -339,9 +408,69 @@ function drawScore(){
             score++
         }
     }
-    context.fillText("You got " + score.toString() + " out of 11 correct!", 2000, 1125)
+    context.fillText("You got ", 2000, 1025)
+    context.fillText(score.toString() + " out of 11 correct!", 2000, 1125)
+    if(score == 11){
+        context.fillText("You win! Congratulations!", 2000, 1225)
+    }
+
+    context.restore()
+}
+
+function drawStarchart(){
+    context.save()
+    context.drawImage(starchartFull, 0, 0, 4000, 2250)
+    drawBackButton(200, -100, 600, 600)
+    
+    let top = 400
+    let left = 200
+    let x_gap = 100
+    let y_gap = 100
+    let box_width = 600
+    let box_height = (2250 - 2 * top - 4 * y_gap) / 6
+    for(let i = 0; i < zodiacDetails.length; i++){
+        let col = Math.floor(i/6)
+        let row = i % 6
+        drawZodiacBox(left + col * (box_width + x_gap), top + row * (box_height + y_gap), box_width, box_height, i)
+    }
+    let main_width = 4000 - 2 * left - 2 * (box_width + x_gap)
+    left = left + 2 * (box_width + x_gap)
+    let activeZodiac = zodiacDetails[starchart_index]
+    context.fillStyle = "#000000"
+    context.font = "120px sans-serif"
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(activeZodiac[0], left + main_width/2, top + 60)
+    context.font = "100px sans-serif"
+    context.fillText(activeZodiac[1], left + main_width/2, top + 200)
+    context.font = "80px sans-serif"
+    top = top + 275
+    let words=  activeZodiac[2].split(" ")
+    while(words.length > 0){
+        let line = ""
+        while(words[0] !== undefined && context.measureText(line + " " + words[0]).width < main_width){
+            line += " " + words.shift()
+        }
+        context.fillText(line, left + main_width/2, top + 40)
+        top += 90
+    }
 
 
+    context.restore()
+}
+
+function drawStatementNotification(){
+    context.save()
+    context.strokeStyle = "#000000"
+    context.fillStyle = "#FFFFFF"
+    context.fillRect(1500, 750, 1000, 750)
+    context.strokeRect(1500, 750, 1000, 750)
+    context.fillStyle = "#000000"
+    context.font = "80px sans-serif"
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText("New statements", 2000, 1075)
+    context.fillText("have been generated.", 2000, 1175)
     context.restore()
 }
 
